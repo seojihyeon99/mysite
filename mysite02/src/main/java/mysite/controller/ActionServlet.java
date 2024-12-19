@@ -17,10 +17,10 @@ public abstract class ActionServlet extends HttpServlet {
 	// operation
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
-		Optional<String> optionalActioName = Optional.ofNullable(request.getParameter("a"));
+		Optional<String> optionalActionName = Optional.ofNullable(request.getParameter("a"));
 		
 		// Action action = getAction(optionalActioName.isEmpty() ? "" : optionalActioName.get());
-		Action action = getAction(optionalActioName.orElse(""));
+		Action action = getAction(optionalActionName.orElse(""));
 		action.execute(request, response);
 	}
 
