@@ -1,24 +1,26 @@
 package mysite.controller;
 
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
+import java.util.Map;
+
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import mysite.controller.action.guestbook.AddAction;
+import mysite.controller.action.guestbook.DeleteAction;
+import mysite.controller.action.guestbook.DeleteFormAction;
+import mysite.controller.action.guestbook.ListAction;
 
 @WebServlet("/guestbook")
-public class GuestBookServlet extends HttpServlet {
+public class GuestbookServlet extends ActionServlet {
 	private static final long serialVersionUID = 1L;
-
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/guestbook/list.jsp");
-		rd.forward(request, response);
+	
+	private Map<String, Action> mapAction = Map.of(
+		"add", new AddAction(),
+		"deleteform", new DeleteFormAction(),
+		"delete", new DeleteAction()
+	);
+	
+	@Override
+	protected Action getAction(String actionName) {
+		return mapAction.getOrDefault(actionName, new ListAction());
 	}
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
-	}
-
 }
+
