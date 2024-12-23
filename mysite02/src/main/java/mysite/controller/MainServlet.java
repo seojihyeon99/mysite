@@ -12,7 +12,6 @@ public class MainServlet extends ActionServlet {
 		String config = getServletConfig().getInitParameter("config");
 		System.out.println("MainController.init() called: " + config);
 		
-		
 		super.init();
 	}
 	

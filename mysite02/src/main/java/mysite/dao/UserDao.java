@@ -15,7 +15,7 @@ public class UserDao {
 		
 		try (
 			Connection conn = getConnection();
-			PreparedStatement pstmt = conn.prepareStatement("insert into user(name, email, password, gender, join_date) values(?, ?, ?, ?, now())");
+			PreparedStatement pstmt = conn.prepareStatement("insert into user values(null, ?, ?, ?, ?, now())");
 		) {
 			pstmt.setString(1, vo.getName());
 			pstmt.setString(2, vo.getEmail());
@@ -27,15 +27,15 @@ public class UserDao {
 			System.out.println("error:" + e);
 		} 
 		
-		return count;		
+		return count;
 	}
-	
+
 	public UserVo findByEmailAndPassword(String email, String password) {
 		UserVo userVo = null;
 		
 		try (
 			Connection conn = getConnection();
-			PreparedStatement pstmt = conn.prepareStatement("select id, name, gender from user where email=? and password=?");
+			PreparedStatement pstmt = conn.prepareStatement("select id, name from user where email=? and password=?");
 		) {
 			pstmt.setString(1, email);
 			pstmt.setString(2, password);
@@ -44,14 +44,10 @@ public class UserDao {
 			if(rs.next()) {
 				Long id = rs.getLong(1);
 				String name = rs.getString(2);
-				String gender = rs.getString(3);
 				
 				userVo = new UserVo();
 				userVo.setId(id);
 				userVo.setName(name);
-				userVo.setGender(gender);
-				userVo.setEmail(email);
-				userVo.setPassword(password);
 			}
 			
 			rs.close();
@@ -62,51 +58,76 @@ public class UserDao {
 		return userVo;
 	}	
 
-	public int updateByEmail(String email, String name, String password, String gender) {
-		int count = 0;
+	public UserVo findById(Long userId) {
+		UserVo result = null;
 		
 		try (
 			Connection conn = getConnection();
-			PreparedStatement pstmt1 = conn.prepareStatement("update user set name=?, gender=?, password=? where email=?");
-			PreparedStatement pstmt2 = conn.prepareStatement("update user set name=?, gender=? where email=?");
+			PreparedStatement pstmt = conn.prepareStatement("select id, name, email, gender from user where id = ?");
 		) {
-			if(!password.trim().equals("")) {
-				pstmt1.setString(1, name);
-				pstmt1.setString(2, gender);				
-				pstmt1.setString(3, password);				
-				pstmt1.setString(4, email);			
 				
-				count = pstmt1.executeUpdate();
-			} else {
-				pstmt2.setString(1, name);
-				pstmt2.setString(2, gender);				
-				pstmt2.setString(3, email);			
+			pstmt.setLong(1, userId);
+
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				Long id = rs.getLong(1);
+				String name = rs.getString(2);
+				String email = rs.getString(3);
+				String gender = rs.getString(4);
 				
-				count = pstmt2.executeUpdate();				
+				result = new UserVo();
+				result.setId(id);
+				result.setName(name);
+				result.setEmail(email);
+				result.setGender(gender);
 			}
-			
+			rs.close();
 		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} 
+			System.out.println("Error:" + e);
+		}		
 		
-		return count;
-	}	
+		return result;
+	}
 	
-	private Connection getConnection() throws SQLException {
+	public int update(UserVo vo) {
+		int result = 0;
+		
+		try (
+			Connection conn = getConnection();
+			PreparedStatement pstmt1 = conn.prepareStatement("update user set name=?, gender=? where id=?");
+			PreparedStatement pstmt2 = conn.prepareStatement("update user set name=?, password=?, gender=? where id=?");
+		) {
+			if("".equals(vo.getPassword())) {
+				pstmt1.setString(1, vo.getName());
+				pstmt1.setString(2, vo.getGender());
+				pstmt1.setLong(3, vo.getId());
+				result = pstmt1.executeUpdate();
+			} else {
+				pstmt2.setString(1, vo.getName());
+				pstmt2.setString(2, vo.getPassword());
+				pstmt2.setString(3, vo.getGender());
+				pstmt2.setLong(4, vo.getId());
+				result = pstmt2.executeUpdate();
+			}
+		} catch (SQLException e) {
+			System.out.println("Error:" + e);
+		}
+		
+		return result;				
+	}
+	
+	private Connection getConnection() throws SQLException{
 		Connection conn = null;
 		
-		try {		
-			// 1. JDBC Driver 로딩
+		try {
 			Class.forName("org.mariadb.jdbc.Driver");
-			
-			// 2. 연결하기
+		
 			String url = "jdbc:mariadb://192.168.0.18:3306/webdb";
 			conn = DriverManager.getConnection(url, "webdb", "webdb");
 		} catch (ClassNotFoundException e) {
 			System.out.println("드라이버 로딩 실패:" + e);
-		}
+		} 
 		
-		return conn;		
+		return conn;
 	}
-
 }

@@ -1,8 +1,7 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c"%>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
 <%@ taglib uri="jakarta.tags.functions" prefix="fn"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,7 +16,7 @@
 			<div id="guestbook" class="delete-form">
 				<form method="post" action="${pageContext.request.contextPath}/guestbook">
 					<input type="hidden" name="a" value="delete">
-					<input type='hidden' name="id" value="param.id">
+					<input type="hidden" name="id" value="${param.id}">
 					<label>비밀번호</label>
 					<input type="password" name="password">
 					<input type="submit" value="확인">
