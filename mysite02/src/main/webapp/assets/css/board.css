@@ -1,4 +1,4 @@
-@CHARSET "UTF-8";
+@charset "UTF-8";
 @import "mysite.css";
 
 #board { margin:20px auto;	width:550px; }
@@ -96,7 +96,7 @@ div.bottom {
 
 div.bottom a { 
 	text-decoration:none; 
-	dispaly:block;
+	display:block;
 }
 
 a#new-book	 { 
@@ -106,6 +106,7 @@ a#new-book	 {
 	font-weight:bold; 
 	background-color:#E8ECF6; 
 	color:#111 
+		
 }
 
 .board-form .bottom a,
