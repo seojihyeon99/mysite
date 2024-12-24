@@ -7,50 +7,105 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import mysite.vo.BoardVo;
 
 public class BoardDao {
-	public List<BoardVo> findAll() {
+	
+	public List<BoardVo> findAll(Map<String, Object> params) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select id, title, hit, (select name from user where id = user_id) 'name', date_format(reg_date, '%Y-%m-%d %H:%i:%s') 'reg_date', g_no, o_no, depth, user_id \n");
+		sql.append("from board \n");
+		
+		String keyword = (String) params.get("keyword");
+		// 검색어가 있는 경우
+		if(!keyword.isEmpty()) {
+			sql.append("where title like concat('%', ?, '%') \n");
+		}
+		sql.append("order by g_no desc, o_no asc \n");
+		sql.append("limit ?, ?");
+		
+		//////////////////////////////////////////
+		
 		List<BoardVo> result = new ArrayList<>();
 		
 		try (
 			Connection conn = getConnection();
-			PreparedStatement pstmt = conn.prepareStatement("select id, title, hit, (select name from user where id = user_id) 'name', date_format(reg_date, '%Y-%m-%d %H:%i:%s'), g_no, o_no, depth, user_id "
-															+ "from board "
-															+ "order by g_no desc, o_no asc");
-			ResultSet rs = pstmt.executeQuery();
+			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
 		) {
+			int idx = 1; // 검색어에 따른 ? 값의 순서 처리를 위함
+			// 검색어가 있는 경우
+			if(!keyword.isEmpty()) {
+				pstmt.setString(idx++, keyword);
+			}
+			
+			pstmt.setInt(idx++, (int)params.get("start"));
+			pstmt.setInt(idx++, (int)params.get("listSize"));
+			
+			ResultSet rs = pstmt.executeQuery();
+			
 			while(rs.next()) {
-				Long id = rs.getLong(1);
-				String title = rs.getString(2);
-				int hit = rs.getInt(3);
-				String name = rs.getString(4);
-				String regDate = rs.getString(5);
-				int gNo = rs.getInt(6);
-				int oNo = rs.getInt(7);
-				int depth = rs.getInt(8);
-				Long userId = rs.getLong(9);
-				
 				BoardVo vo = new BoardVo();
-				vo.setId(id);
-				vo.setTitle(title);
-				vo.setHit(hit);
-				vo.setName(name);
-				vo.setRegDate(regDate);
-				vo.setgNo(gNo);
-				vo.setoNo(oNo);
-				vo.setDepth(depth);
-				vo.setUserId(userId);
+				vo.setId(rs.getLong("id"));
+				vo.setTitle(rs.getString("title"));
+				vo.setHit(rs.getInt("hit"));
+				vo.setName(rs.getString("name"));
+				vo.setRegDate(rs.getString("reg_date"));
+				vo.setgNo(rs.getInt("g_no"));
+				vo.setoNo(rs.getInt("o_no"));
+				vo.setDepth(rs.getInt("depth"));
+				vo.setUserId(rs.getLong("user_id"));
 				
 				result.add(vo);
 			}
+			
+			rs.close();
 		} catch (SQLException e) {
 			System.out.println("error:" + e);
 		} 
 		
 		return result;
 	}
+	
+	public int getTotalCount(Map<String, Object> params) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select count(id) \n");
+		sql.append("from board \n");
+		
+		String keyword = (String) params.get("keyword");
+		// 검색어가 있는 경우
+		if(!keyword.isEmpty()) {
+			sql.append("where title like concat('%', ?, '%') \n");
+		}
+		
+		//////////////////////////////////////////
+		
+		int cnt = 0;
+		
+		try (
+			Connection conn = getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
+		) {
+			// 검색어가 있는 경우
+			if(!keyword.isEmpty()) {
+				pstmt.setString(1, keyword);
+			}
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				cnt = rs.getInt(1);
+			}
+			
+			rs.close();
+		} catch (SQLException e) {
+			System.out.println("error:" + e);
+		} 
+		
+		return cnt;
+	}
+	
 
 	public BoardVo findParentById(Long id) {
 		BoardVo boardVo = null;
@@ -210,5 +265,6 @@ public class BoardDao {
 		
 		return conn;
 	}
+
 
 }

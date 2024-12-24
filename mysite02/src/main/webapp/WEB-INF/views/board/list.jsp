@@ -51,15 +51,38 @@
 				</table>
 				
 				<!-- pager 추가 -->
+				<c:set var="currentPage" value="${navigation.currentPage}" />
+				<c:set var="totalPageCount" value="${navigation.totalPageCount}" />
+				<c:set var="naviSize" value="${navigation.naviSize}" />
+				<c:set var="startPage" value="${navigation.startPage}" />
+				<c:set var="endPage" value="${navigation.endPage}" />
+				<c:if test="${endPage > totalPageCount}">
+				    <c:set var="endPage" value="${totalPageCount}" />
+				</c:if>
+				
 				<div class="pager">
 					<ul>
-						<li><a href="">◀</a></li>
-						<li><a href="">1</a></li>
-						<li class="selected">2</li>
-						<li><a href="">3</a></li>
-						<li>4</li>
-						<li>5</li>
-						<li><a href="">▶</a></li>
+						<!-- 이전 버튼 -->
+						<li>
+							<a href="${pageContext.request.contextPath}/board?page=${startPage > 1 ? startPage - 1 : 1}">◀</a>
+						</li>
+						
+						<!-- 페이지 번호 -->
+				        <c:forEach var="i" begin="${startPage}" end="${endPage}">
+				            <c:choose>
+				                <c:when test="${currentPage == i}">
+				                    <li class="selected">${i}</li>
+				                </c:when>
+				                <c:otherwise>
+				                    <li><a href="${pageContext.request.contextPath}/board?page=${i}">${i}</a></li>
+				                </c:otherwise>
+				            </c:choose>
+				        </c:forEach>
+				        						
+				       	<!-- 다음 버튼 -->
+				        <li>
+				            <a href="${pageContext.request.contextPath}/board?page=${endPage < totalPageCount ? endPage + 1 : totalPageCount}">▶</a>
+				        </li>
 					</ul>
 				</div>					
 				<!-- pager 추가 -->	
