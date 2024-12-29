@@ -266,6 +266,23 @@ public class BoardDao {
 		return vo;	
 	}
 	
+	public int updateHit(Long id) {
+		int result = 0;
+		
+		try (
+			Connection conn = DBConnectionUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement("update board set hit = hit + 1 where id=?");
+		) {
+			pstmt.setLong(1, id);
+			
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("Error:" + e);
+		}
+		
+		return result;				
+	}
+
 	public int deleteById(Long id) {
 		int count = 0;
 		
@@ -282,5 +299,6 @@ public class BoardDao {
 		
 		return count;	
 	}
+
 
 }
