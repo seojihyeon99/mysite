@@ -30,7 +30,7 @@
 					</tr>
 					<c:forEach items="${list}" var="vo" varStatus="status">
 						<tr>
-							<td>[${vo.id}]</td>
+							<td>[${navigation.totalCount - (start + status.index)}]</td>
 							<td style="text-align:left; padding-left:${vo.depth * 20}px">
 								<c:if test="${vo.depth > 0}">
 									<img src="${pageContext.request.contextPath }/assets/images/reply.png">

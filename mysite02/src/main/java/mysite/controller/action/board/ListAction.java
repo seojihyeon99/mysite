@@ -45,6 +45,7 @@ public class ListAction implements Action {
 		request.setAttribute("page", page);
 		request.setAttribute("keyword", keyword);
 		request.setAttribute("navigation", pageNavigation);
+		request.setAttribute("start", start);
 		
 		System.out.println(pageNavigation.toString());
 		
