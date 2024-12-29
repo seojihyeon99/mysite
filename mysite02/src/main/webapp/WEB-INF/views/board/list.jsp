@@ -70,7 +70,12 @@
 						        </c:when>
 						        <c:otherwise>
 						            <!-- 버튼 활성화 -->
-						            <a href="${pageContext.request.contextPath}/board?page=${startPage > 1 ? startPage - 1 : 1}">◀</a>
+        							<c:if test="${not empty keyword && keyword != ''}">
+							            <a href="${pageContext.request.contextPath}/board?page=${startPage > 1 ? startPage - 1 : 1}&keyword=${keyword}">◀</a>
+									</c:if>
+									<c:if test="${empty keyword || keyword == ''}">
+							            <a href="${pageContext.request.contextPath}/board?page=${startPage > 1 ? startPage - 1 : 1}">◀</a>
+									</c:if>
 						        </c:otherwise>
 						    </c:choose>
 						</li>
@@ -101,7 +106,12 @@
 						        </c:when>
 						        <c:otherwise>
 						            <!-- 버튼 활성화 -->
-						            <a href="${pageContext.request.contextPath}/board?page=${endPage < totalPageCount ? endPage + 1 : totalPageCount}">▶</a>
+        							<c:if test="${not empty keyword && keyword != ''}">
+							            <a href="${pageContext.request.contextPath}/board?page=${endPage < totalPageCount ? endPage + 1 : totalPageCount}&keyword=${keyword}">▶</a>
+									</c:if>
+									<c:if test="${empty keyword || keyword == ''}">
+										<a href="${pageContext.request.contextPath}/board?page=${endPage < totalPageCount ? endPage + 1 : totalPageCount}">▶</a>
+									</c:if>
 						        </c:otherwise>
 						    </c:choose>				        
 				        </li>
