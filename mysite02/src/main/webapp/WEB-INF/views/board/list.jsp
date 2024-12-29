@@ -59,12 +59,20 @@
 				<c:if test="${endPage > totalPageCount}">
 				    <c:set var="endPage" value="${totalPageCount}" />
 				</c:if>
-				
 				<div class="pager">
 					<ul>
 						<!-- 이전 버튼 -->
 						<li>
-							<a href="${pageContext.request.contextPath}/board?page=${startPage > 1 ? startPage - 1 : 1}">◀</a>
+						    <c:choose>
+						        <c:when test="${navigation.startRange}">
+						            <!-- 버튼 비활성화 -->
+						            <a href="#" class="disabled">◀</a>
+						        </c:when>
+						        <c:otherwise>
+						            <!-- 버튼 활성화 -->
+						            <a href="${pageContext.request.contextPath}/board?page=${startPage > 1 ? startPage - 1 : 1}">◀</a>
+						        </c:otherwise>
+						    </c:choose>
 						</li>
 						
 						<!-- 페이지 번호 -->
@@ -74,14 +82,28 @@
 				                    <li class="selected">${i}</li>
 				                </c:when>
 				                <c:otherwise>
-				                    <li><a href="${pageContext.request.contextPath}/board?page=${i}">${i}</a></li>
+									<c:if test="${not empty keyword && keyword != ''}">
+									    <li><a href="${pageContext.request.contextPath}/board?page=${i}&keyword=${keyword}">${i}</a></li>
+									</c:if>
+									<c:if test="${empty keyword || keyword == ''}">
+									    <li><a href="${pageContext.request.contextPath}/board?page=${i}">${i}</a></li>
+									</c:if>
 				                </c:otherwise>
 				            </c:choose>
 				        </c:forEach>
 				        						
 				       	<!-- 다음 버튼 -->
 				        <li>
-				            <a href="${pageContext.request.contextPath}/board?page=${endPage < totalPageCount ? endPage + 1 : totalPageCount}">▶</a>
+						    <c:choose>
+						        <c:when test="${navigation.endRange}">
+						            <!-- 버튼 비활성화 -->
+						            <a href="#" class="disabled">▶</a>
+						        </c:when>
+						        <c:otherwise>
+						            <!-- 버튼 활성화 -->
+						            <a href="${pageContext.request.contextPath}/board?page=${endPage < totalPageCount ? endPage + 1 : totalPageCount}">▶</a>
+						        </c:otherwise>
+						    </c:choose>				        
 				        </li>
 					</ul>
 				</div>					

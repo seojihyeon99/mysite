@@ -32,6 +32,7 @@ public class WriteAction implements Action {
 		
 		String title = request.getParameter("title");
 		String contents = request.getParameter("contents");
+		int newId = -1;
 		
 		// 새글인 경우
 		if(request.getParameter("id") == null) {
@@ -40,7 +41,7 @@ public class WriteAction implements Action {
 			vo.setContents(contents);
 			vo.setUserId(authUser.getId());
 			
-			new BoardDao().insert(vo);			
+			newId = new BoardDao().insert(vo);			
 		}
 		// 댓글인 경우 (기존 게시물의 id 값 있음)
 		else {
@@ -49,15 +50,18 @@ public class WriteAction implements Action {
 			// 부모글 정보(gNo, oNo, depth) 찾아오기
 			BoardVo vo = new BoardDao().findParentById(id);
 
+			// 같은 그룹의 글들 중 새 댓글의 oNo보다 큰 글들의 oNo는 1씩 더함
+			vo = new BoardDao().updateOrderNo(vo);
+			
 			vo.setTitle(title);
 			vo.setContents(contents);
 			vo.setUserId(authUser.getId());
 			
 			System.out.println(vo);
 			
-			new BoardDao().insertReply(vo);
+			newId = new BoardDao().insertReply(vo);
 		}
 		
-		response.sendRedirect(request.getContextPath() + "/board");
+		response.sendRedirect(request.getContextPath() + "/board?a=view&id=" + newId);
 	}
 }

@@ -1,7 +1,6 @@
 package mysite.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import mysite.util.DBConnectionUtil;
 import mysite.vo.BoardVo;
 
 public class BoardDao {
@@ -31,7 +31,7 @@ public class BoardDao {
 		List<BoardVo> result = new ArrayList<>();
 		
 		try (
-			Connection conn = getConnection();
+			Connection conn = DBConnectionUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
 		) {
 			int idx = 1; // 검색어에 따른 ? 값의 순서 처리를 위함
@@ -84,7 +84,7 @@ public class BoardDao {
 		int cnt = 0;
 		
 		try (
-			Connection conn = getConnection();
+			Connection conn = DBConnectionUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
 		) {
 			// 검색어가 있는 경우
@@ -111,7 +111,7 @@ public class BoardDao {
 		BoardVo boardVo = null;
 		
 		try (
-			Connection conn = getConnection();
+			Connection conn = DBConnectionUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement("select g_no, o_no, depth from board where id = ?");
 		) {
 			pstmt.setLong(1, id);
@@ -140,7 +140,7 @@ public class BoardDao {
 		BoardVo boardVo = null;
 		
 		try (
-			Connection conn = getConnection();
+			Connection conn = DBConnectionUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement("select title, contents, g_no, o_no, depth, user_id from board where id = ?");
 		) {
 			pstmt.setLong(1, id);
@@ -173,32 +173,41 @@ public class BoardDao {
 	}	
 	
 	public int insert(BoardVo vo) {
-		int count = 0;
+		int newId = 0;
 		
 		try (
-			Connection conn = getConnection();
+			Connection conn = DBConnectionUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement("insert into board (title, contents, hit, reg_date, g_no, o_no, depth, user_id) "
-					+ "select ?, ?, 0, now(), ifnull(max(g_no), 0) + 1, 1, 0, ? from board");
+					+ "select ?, ?, 0, now(), ifnull(max(g_no), 0) + 1, 1, 0, ? from board",
+					PreparedStatement.RETURN_GENERATED_KEYS);
 		) {
 			pstmt.setString(1, vo.getTitle());
 			pstmt.setString(2, vo.getContents());
 			pstmt.setLong(3, vo.getUserId());
 			
-			count = pstmt.executeUpdate();
+			int count = pstmt.executeUpdate();
+			
+			if(count > 0) {
+				ResultSet rs = pstmt.getGeneratedKeys();
+				if(rs.next()) {
+					newId = rs.getInt(1);
+				}
+			}
 		} catch (SQLException e) {
 			System.out.println("error:" + e);
 		} 
 		
-		return count;			
+		return newId;			
 	}
 	
 	public int insertReply(BoardVo vo) {
-		int count = 0;
+		int newId = 0;
 		
 		try (
-			Connection conn = getConnection();
+			Connection conn = DBConnectionUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement("insert into board (title, contents, hit, reg_date, g_no, o_no, depth, user_id) "
-															+ "values (?, ?, 0, now(), ?, ?, ?, ?)");
+															+ "values (?, ?, 0, now(), ?, ?, ?, ?)",
+															PreparedStatement.RETURN_GENERATED_KEYS);
 		) {
 			pstmt.setString(1, vo.getTitle());
 			pstmt.setString(2, vo.getContents());
@@ -207,19 +216,26 @@ public class BoardDao {
 			pstmt.setInt(5, vo.getDepth() + 1); // 부모글의 depth + 1
 			pstmt.setLong(6, vo.getUserId());
 			
-			count = pstmt.executeUpdate();
+			int count = pstmt.executeUpdate();
+			
+			if(count > 0) {
+				ResultSet rs = pstmt.getGeneratedKeys();
+				if(rs.next()) {
+					newId = rs.getInt(1);
+				}
+			}
 		} catch (SQLException e) {
 			System.out.println("error:" + e);
 		} 
 		
-		return count;			
+		return newId;
 	}	
 	
 	public int update(BoardVo vo) {
 		int result = 0;
 		
 		try (
-			Connection conn = getConnection();
+			Connection conn = DBConnectionUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement("update board set title=?, contents=? where id=?");
 		) {
 			pstmt.setString(1, vo.getTitle());
@@ -234,11 +250,27 @@ public class BoardDao {
 		return result;				
 	}
 	
+	public BoardVo updateOrderNo(BoardVo vo) {
+		try (
+			Connection conn = DBConnectionUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement("update board set o_no = o_no + 1 where g_no = ? and o_no > ?");
+		) {
+			pstmt.setInt(1, vo.getgNo());
+			pstmt.setInt(2, vo.getoNo());
+			
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("Error:" + e);
+		}
+		
+		return vo;	
+	}
+	
 	public int deleteById(Long id) {
 		int count = 0;
 		
 		try (
-			Connection conn = getConnection();
+			Connection conn = DBConnectionUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement("delete from board where id=?");
 		) {
 			pstmt.setLong(1, id);
@@ -250,21 +282,5 @@ public class BoardDao {
 		
 		return count;	
 	}
-	
-	private Connection getConnection() throws SQLException{
-		Connection conn = null;
-		
-		try {
-			Class.forName("org.mariadb.jdbc.Driver");
-		
-			String url = "jdbc:mariadb://192.168.0.18:3306/webdb";
-			conn = DriverManager.getConnection(url, "webdb", "webdb");
-		} catch (ClassNotFoundException e) {
-			System.out.println("드라이버 로딩 실패:" + e);
-		} 
-		
-		return conn;
-	}
-
 
 }

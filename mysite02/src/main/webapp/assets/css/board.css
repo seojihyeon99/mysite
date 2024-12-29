@@ -151,3 +151,11 @@ div.pager  ul li a:visited,
 div.pager  ul li a:link,
 div.pager  ul li a:active	{ text-decoration: none; color:#555 }
 div.pager  ul li a:hover	{ text-decoration: none; color:#f00 }
+
+/* 정의한 css */
+a.disabled {
+    pointer-events: none;
+    color: #d9d9d9 !important;
+    text-decoration: none;
+    cursor: default;
+}
