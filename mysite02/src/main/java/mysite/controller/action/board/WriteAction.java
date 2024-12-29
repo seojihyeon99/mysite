@@ -19,12 +19,13 @@ public class WriteAction implements Action {
 
 		// Access Control
 		if(session == null) {
-			response.sendRedirect(request.getContextPath());
+			response.sendRedirect(request.getContextPath()+ "/user?a=loginform");
 			return;
 		}
+		
 		UserVo authUser = (UserVo)session.getAttribute("authUser");
 		if(authUser == null) {
-			response.sendRedirect(request.getContextPath());
+			response.sendRedirect(request.getContextPath()+ "/user?a=loginform");
 			return;
 		}
 		
