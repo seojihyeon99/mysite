@@ -36,7 +36,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 			return true; // 인증/권한 검사 건너뜀
 		}
 		
-		
 		/* 인증/권한 검사 */
 		String role = auth.role();
 		
@@ -48,6 +47,22 @@ public class AuthInterceptor implements HandlerInterceptor {
 			response.sendRedirect(request.getContextPath() + "/user/login");
 			return false; // 요청 처리 중단
 		}
+		
+		// 권한(ROLE) 체크
+		if(role.equals("ADMIN")) {
+			if(!authUser.getRole().equals("ADMIN")) {
+				response.sendRedirect(request.getContextPath());
+				return false;
+			}
+		} else if(role.equals("USER")) {
+			if(!authUser.getRole().equals("ADMIN") && !authUser.getRole().equals("USER")) {
+				response.sendRedirect(request.getContextPath());
+				return false;
+			}			
+		} else {
+			return false;
+		}
+		
 		
 		//7. @Auth가 붙어 있고 인증도 된 경우
 		return true;
