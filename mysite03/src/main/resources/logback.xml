@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<configuration>
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>UTF-8</charset>
+			<Pattern>
+				%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n
+			</Pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/mysite-log/exception.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n
+			</Pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>/mysite-log/exception.%i.log.zip</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>10</MaxIndex>
+		</rollingPolicy>
+		<!-- 파일 크기가 100MB를 초과하면, 새로운 파일로 롤링(교체) 수행 -->
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>100MB</MaxFileSize> 
+		</triggeringPolicy>
+	</appender>	
+
+	<!-- level="error" : error 레벨 이상의 로그만 기록 --> <!-- additivity="false" : 상위 로거(root logger)로 로그를 전달하지 않음 -->
+	<logger name="mysite.exception" level="error" additivity="false">
+            <appender-ref ref="fileAppender" />
+            <appender-ref ref="consoleAppender" />
+    </logger>
+	
+	<!-- root(글로벌) logger : 모든 로거의 상위 로거로, 별도로 정의되지 않은 모든 로그를 처리 -->
+	<root level="debug">
+		<appender-ref ref="consoleAppender" />
+	</root>
+
+</configuration>
