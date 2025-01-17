@@ -15,7 +15,7 @@
 		<div id="content">
 			<div id="board">
 				<form class="board-form" method="post" action="${pageContext.request.contextPath }/board/modify">
-					<input type="hidden" name="no" value="${boardVo.id }" />
+					<input type="hidden" name="id" value="${boardVo.id }" />
 					<input type="hidden" name="p" value="${param.p }" />
 					<input type="hidden" name="kwd" value="${param.kwd }" />
 					<table class="tbl-ex">

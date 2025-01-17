@@ -2,6 +2,7 @@
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
 <%@ taglib uri="jakarta.tags.functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <script>
 window.addEventListener("load", function() {
@@ -32,17 +33,16 @@ window.addEventListener("load", function() {
 					</c:otherwise>
 				</c:choose>
 			</div>			
-			<ul>
-				<c:choose>
-					<c:when test="${empty authUser }" >
-						<li><a href="${pageContext.request.contextPath }/user/login"><spring:message code="header.gnb.login"/></a></li>
-						<li><a href="${pageContext.request.contextPath }/user/join"><spring:message code="header.gnb.join"/></a></li>
-					</c:when>
-					<c:otherwise>			
-						<li><a href="${pageContext.request.contextPath }/user/update"><spring:message code="header.gnb.settings"/></a></li>
-						<li><a href="${pageContext.request.contextPath }/user/logout"><spring:message code="header.gnb.logout"/></a></li>
-						<li><spring:message code="header.gnb.greeting"/> ${authUser.name }</li>
-					</c:otherwise>
-				</c:choose>	
+			<ul>				
+				<sec:authorize access="!isAuthenticated()">
+					<li><a href="${pageContext.request.contextPath }/user/login">로그인</a></li>
+					<li><a href="${pageContext.request.contextPath }/user/join">회원가입</a></li>				
+				</sec:authorize>
+				<sec:authorize access="isAuthenticated()">
+					<sec:authentication property="principal" var="authUser"/>
+					<li><a href="${pageContext.request.contextPath }/user/update">회원정보수정</a></li>
+					<li><a href="${pageContext.request.contextPath }/user/logout">로그아웃</a></li>				
+					<li><spring:message code="header.gnb.greeting"/>${authUser.name}</li>
+				</sec:authorize>				
 			</ul>
 		</div>
