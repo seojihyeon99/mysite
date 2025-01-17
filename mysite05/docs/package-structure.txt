@@ -1,0 +1,34 @@
+[src/main/java]
+	mysite	
+	 |--- config
+	 |	|--- AppConfig.java
+	 |	|--- WebConfig.java
+	 |	|--- app
+	 |	|	|--- DBConfig.java
+	 |	|	|--- MyBatisConfig.java
+	 |	|--- web
+	 |	|	|--- MvcConfig.java
+	 |	|	|--- SecurityConfig.java
+	 |	|	|--- LocaleConfig.java
+	 |	|	|--- FileuploadConfig.java
+	 |--- initializer
+	 |	|--- MySiteWebApplicationInitializer	 
+	 |--- controller
+	 |--- service
+	 |--- repository
+
+[src/main/resources]
+	mysite
+	 |--- config
+	 |	|--- app
+	 |	|	|--- jdbc.properties
+	 |	|	|--- mybatis
+	 |	|		|--- configuration.xml
+	 |	|		|--- mappers
+	 |	|			|--- board.xml
+	 |	|			|--- user.xml
+	 |--- web
+	 |	|--- fileupload.properties
+	 |	|--- messages
+	 |		|--- message_ko.properties
+	 |		|--- message_en.properties
