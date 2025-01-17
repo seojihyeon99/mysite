@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import mysite.config.app.DBConfig;
 import mysite.config.app.MyBatisConfig;
-import mysite.config.web.SecurityConfig;
+import mysite.config.app.SecurityConfig;
 
 @Configuration
 @EnableAspectJAutoProxy
