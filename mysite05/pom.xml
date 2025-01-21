@@ -2,20 +2,18 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>com.poscodx</groupId>
-		<artifactId>mysite</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
+
+	<groupId>com.poscodx</groupId>
 	<artifactId>mysite05</artifactId>
 	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 		<org.springframework-version>6.2.1</org.springframework-version>
-        <org.springsecurity.version>6.4.2</org.springsecurity.version>
+		<org.springsecurity.version>6.4.2</org.springsecurity.version>
 		<jcloverslf4j.version>1.7.36</jcloverslf4j.version>
 		<logback.version>1.2.11</logback.version>
 	</properties>
@@ -49,27 +47,27 @@
 			<version>2.18.1</version>
 		</dependency>
 
-        <!-- spring security web -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>${org.springsecurity.version}</version>
-        </dependency>
+		<!-- spring security web -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${org.springsecurity.version}</version>
+		</dependency>
 
-        <!-- spring security config -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <version>${org.springsecurity.version}</version>
-        </dependency>
-        
-        <!-- spring security config -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-taglibs</artifactId>
-            <version>${org.springsecurity.version}</version>
-        </dependency>
-        
+		<!-- spring security config -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${org.springsecurity.version}</version>
+		</dependency>
+
+		<!-- spring security taglibs -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<version>${org.springsecurity.version}</version>
+		</dependency>
+
 		<!-- spring jdbc -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -158,5 +156,16 @@
 
 	<build>
 		<finalName>mysite05</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<url>${tomcat.deploy.url}</url>
+					<server>tomcat-poscodx</server>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>

@@ -1,20 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.poscodx</groupId>
-    <artifactId>mysite</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
-  <artifactId>mysite04</artifactId>
-  <packaging>war</packaging>
-  
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.poscodx</groupId>
+	<artifactId>mysite04</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 		<org.springframework-version>6.2.1</org.springframework-version>
-		<jcloverslf4j.version>1.7.36</jcloverslf4j.version>		
-    	<logback.version>1.2.11</logback.version>
+		<jcloverslf4j.version>1.7.36</jcloverslf4j.version>
+		<logback.version>1.2.11</logback.version>
 	</properties>
 
 	<dependencies>
@@ -25,10 +25,10 @@
 			<version>${org.springframework-version}</version>
 			<!-- JCL excluded -->
 			<exclusions>
-			   <exclusion>
-				  <groupId>org.springframework</groupId>
-				  <artifactId>spring-jcl</artifactId>
-			   </exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-jcl</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -38,14 +38,14 @@
 			<artifactId>spring-aspects</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
-		
+
 		<!-- jackson -->
 		<dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-databind</artifactId>
-		    <version>2.18.1</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.18.1</version>
 		</dependency>
-		
+
 		<!-- spring jdbc -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -81,11 +81,11 @@
 
 		<!-- hibernate validator -->
 		<dependency>
-		   <groupId>org.hibernate</groupId>
-		   <artifactId>hibernate-validator</artifactId>
-		   <version>8.0.0.Final</version>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>8.0.0.Final</version>
 		</dependency>
-		
+
 		<!-- jstl/el -->
 		<dependency>
 			<groupId>jakarta.el</groupId>
@@ -103,17 +103,17 @@
 			<version>3.0.1</version>
 		</dependency>
 
-		<!-- Logback --> 
-		<dependency>                                    
-			<groupId>org.slf4j</groupId>                
-			<artifactId>jcl-over-slf4j</artifactId>     
-			<version>${jcloverslf4j.version}</version>  
+		<!-- Logback -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${jcloverslf4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
-		</dependency>		
+		</dependency>
 
 		<!-- servlet api -->
 		<dependency>
@@ -134,5 +134,16 @@
 
 	<build>
 		<finalName>mysite04</finalName>
-	</build>  
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<url>${tomcat.deploy.url}</url>
+					<server>tomcat-poscodx</server>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
